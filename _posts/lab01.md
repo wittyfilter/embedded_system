@@ -1,0 +1,316 @@
+---
+layout: post
+title: Lab 01 Introduction
+date: 2023-02-03 00:00:00
+---
+
+Lab 01 Introduction
+==========================================
+
+##### This lab is mainly from the CP216 labs in [WLU](https://bohr.wlu.ca/cp216/labs)
+
+
+We assume that you have a basic grounding in using email and a web browser and handling a pc. If you need extra help for anything related to a lab, please mail to the teacher.
+
+* * *
+
+The CPUlator Computer System Simulator
+--------------------------------------
+
+The main tool that we use in this course is the [CPUlator Computer System Simulator](https://cpulator.01xz.net/). We will discuss:
+
+*   the purpose of the software
+*   documentation and help
+*   a sample ARM assembly language program
+*   executing the simulator (running your program)
+    *   loading and executing the program
+    *   understanding and using the graphical user interface, including registers, memory, and output
+*   the coding standards you are to use for this course
+
+The CPUlator Computer System Simulator simulates a number of different computers in a range of assembly languages. We are interested in using ARM7 on the DE1-SoC computer, which provides a set of simulated hardware, such as LEDs and seven segment displays to 'talk' to. From the main CPUlator screen, choose _Architecture: ARMv7_ and _System: ARMv7 DE1-Soc_:
+
+
+![The CPUlator Simulation Selection](deviceSelection.png)
+
+You may also go directly to this version: [https://cpulator.01xz.net/?sys=arm-de1soc](https://cpulator.01xz.net/?sys=arm-de1soc).
+
+The CPUlator Computer System Simulator has an editor, and you can load files from your pc into the editor, but the program's _File / Save_ option saves the editor contents to your download folder under an arbitrary name. (For security reasons the browser cannot save a file back to the one you loaded into the editor.) You can also copy/paste the contents of the editor into a local editor and save your code that way.
+
+Copy the following code into the editor:
+
+```nasm
+/*
+------------------------------------------------------- 
+l01.s 
+Assign to and add contents of registers.
+------------------------------------------------------- 
+Author:  Zhe Yang 
+ID:      123456789 
+Email:   zheyang@zjut.edu.cn
+Date:    20xx-xx-xx 
+------------------------------------------------------- 
+*/ 
+.org    0x1000  // Start at memory location 1000 
+.text           // Code section 
+.global _start 
+_start: 
+
+mov r0, 9       // Store decimal 9 in register r0 
+mov r1, 0xE     // Store hex E (decimal 14) in register r1 
+add r2, r1, r0  // Add the contents of r0 and r1 and put result in r2  
+
+// End program 
+_stop: 
+b   _stop       
+.end
+```
+
+Press `Compile and Load`. The result of the compilation appears in the _Messages_ box at the bottom of the screen. The result of attempting to compile this code should look something like:
+
+    Compiling...
+    Assemble: arm-altera-eabi-as -mfloat-abi=soft -march=armv7-a -mcpu=cortex-a9 -mfpu=neon-fp16 --gdwarf2 -o work/asmOXq9Xd.s.o work/asmOXq9Xd.s
+    work/asmOXq9Xd.s: Assembler messages:
+    work/asmOXq9Xd.s:15: Error: immediate expression requires a # prefix -- \`mov r0,9'
+    work/asmOXq9Xd.s:16: Error: immediate expression requires a # prefix -- \`mov r1,0xE'
+    Compile failed.
+
+The simulator flags errors immediately, although it may not flag all errors at once. This program is missing a `#` character in front of the decimal value 9 (`#` indicates that the value is an _immediate_, or raw, value), and the hex value 0xE, and clearly flags the errors with the lines:
+
+    work/asmOXq9Xd.s:15: Error: immediate expression requires a # prefix -- \`mov r0,9'
+    work/asmOXq9Xd.s:16: Error: immediate expression requires a # prefix -- \`mov r1,0xE'
+
+Fix the error in the code by adding a `#` character in front of the 9 and the 0xE, and press `Compile and Load` to recompile the source code. The _Messages_ box now displays:
+
+    Compiling...
+    Code and data loaded from ELF executable into memory. Total size is 4112 bytes.
+    Assemble: arm-altera-eabi-as -mfloat-abi=soft -march=armv7-a -mcpu=cortex-a9 -mfpu=neon-fp16 --gdwarf2 -o work/asmkTsxTg.s.o work/asmkTsxTg.s
+    Link: arm-altera-eabi-ld  --script build\_arm.ld -e \_start -u \_start -o work/asmkTsxTg.s.elf work/asmkTsxTg.s.o
+    Compile succeeded.
+
+You may clear the _Messages_ box at any time by pressing `Clear`.
+
+A successful compilation opens the _Disassembly_ tab in place of the _Editor_ tab. This shows your original code along with a compiled version of your code (which may not match your original code), the addresses in memory used by your code, and the _opcode_, or hexadecimal version of your code. You may also select the _Memory_ tab to display the contents of memory
+
+The _Registers_ box shows the current contents of the computer's registers (to be discussed later), and the _Settings_ box allows you to change how the contents of the registers and memory are displayed, from hexadecimal to signed decimal, for example.
+
+Click on the _Memory_ tab. Note how the contents of memory address 0x1000 match the memory contents listed in the _Disassembly_ tab. (The `aaaaaaaa` values are the simulator's way of displaying 'unknown' or 'uninitialized' memory address contents.) You may go to any location in memory by typing a hexadecimal address in the _Go to address, label, or register:_ box.
+
+Switch back to the _Disassembly_ tab and run the program by pressing `Continue`.
+
+The light-yellow line in the code now highlights the termination line of the code, and the _Registers_ box highlights the values of the changed registers. Use the _Settings_ box to change the registers display between hexadecimal and decimal:
+
+
+![Registers in Hexadecimal](hexadecimal.png) ![Registers in Decimal](decimal.png)
+
+The Program Counter `(pc)` register stores the address of the next instruction to be executed. At the end of this program it stores the value `0x100c` (hex) as the execution of the program ends at this address. The _Memory_ tab is unchanged as the program makes no changes to memory.
+
+Restart the program by pressing `Restart`. Update the contents of registers `r0`, `r1`, and `r2` by clicking on them and entering 0. Open the _Disassembly_ tab and step through the program one line at a time by pressing `Step Into`. The code is now executed one line at time, the line being highlighted before it is executed, and the register values being updated individually as they are changed. This is extraordinarily useful for debugging purposes - we will go through further debugging techniques in future labs.
+
+* * *
+
+Programming in the ARM Assembly Language
+----------------------------------------
+
+The sample program was written in the ARM assembly language. It is a low-level language that allows you direct access to a microprocessor's components, such as registers and memory. The sample program uses a number of different _directives_ and _instructions_.
+
+### Directives
+
+A compiler _directive_ sets compiler options, defines constants, or organizes memory.
+
+The general syntax for most ARM directives is:
+
+    .directive {label}{value}
+
+(Elements in `{}` are optional.)
+
+.directive
+
+  - The directive name - all directives start with a period.
+
+label
+
+  - an optional label for a line
+
+value
+
+  - a constant value as a string, decimal number, hex number, or binary number
+
+The directives used in our sample program appear in all our programs. They are:
+
+`.org`
+
+  - Format: `.org memory_address`
+
+  - tells the compiler where in memory to place the program. For various reasons we don't normally want to start at memory location 0.
+
+`.text`
+
+  - identifies the code section of the program.
+
+`.global`
+
+  - Format: `.global label`
+
+  - identifies globally visible labels.
+
+`.end`
+
+  - identifies the end of the source code and data.
+
+### Instructions
+
+The general syntax for most ARM instructions is:
+
+    {label} operation{condition code}{flags} Rd, Operand1{, Operand2}
+
+(Elements in `{}` are optional.)
+
+label
+
+  - an optional label for a line
+
+operation
+
+  - the three letter operation instruction (ex: `mov`, `add`)
+
+condition code
+
+  - an optional condition code (to be discussed later)
+
+flag
+
+  - an optional flag (to be discussed later)
+
+`Rd`
+
+  - The destination register
+
+`Operand1`
+
+  - A source register or other value
+
+`Operand2`
+
+  - A second source register or other value
+
+The instructions used in our sample program are:
+
+`mov` (Move)
+
+  - Puts a value into a register.
+
+  - The instruction:
+
+        mov r0, #9
+      
+
+  - puts the (immediate) decimal value 9 into register `r0`.
+
+  - The instruction:
+
+        mov r1, r0
+      
+
+  - Copies the value in register `r0` into register `r1`.
+
+`add` (Add)
+
+  - adds two values and places the results into a register.
+
+  - The instruction:
+
+        add r2, r1, r0
+      
+
+  - adds the contents of `r0` and `r1` and puts the result in register `r2`.
+
+  - The instruction:
+
+        add r3, r1, #7
+      
+
+  - adds the contents of `r1` and the decimal value 7 and puts the result in register `r3`.
+
+`B` (Branch)
+
+  - Branches execution to a memory location.
+
+  - The instruction:
+
+        _stop: 
+        b _stop
+      
+  - terminates a program by branching to its own location.
+
+### Program Documentation
+
+Add the following to the top of all your programs, and replace the 'your' parts with your information.
+
+```armasm
+/* 
+------------------------------------------------------- 
+file name description 
+------------------------------------------------------- 
+Author:  your name 
+ID:      your ID 
+Email:   your email 
+Date:    yyyy-mm-dd 
+------------------------------------------------------- 
+*/
+```
+  
+
+Task
+==========================================
+In the following tasks, don't forget to press `Compile and Load` after any code changes you make, then `Continue` or `Step Into` to execute the program.
+
+Put your written answers into a .doc or .pdf file with corresponding screenshots.
+
+Copy the following contents to the CPUlator and work with its code for the following tasks:
+
+```nasm
+/*
+-------------------------------------------------------
+intro.s
+-------------------------------------------------------
+Author:
+ID:
+Email:
+Date:
+-------------------------------------------------------
+Assign to and add contents of registers.
+-------------------------------------------------------
+*/
+.org 0x1000  // Start at memory location 1000
+.text        // Code section
+.global _start
+_start:
+
+mov r0, 9       // Store decimal 9 in register r0
+mov r1, 0xE     // Store hex E (decimal 14) in register r1
+add r2, r1, r0  // Add the contents of r0 and r1 and put result in r2
+
+// End program
+_stop:          
+b _stop         
+```
+
+
+1.  In the _intro_ program, replace the value `0xE` (hex) with `14` (decimal), and execute the program again. Does the behaviour of the program change in any way?
+    
+    * * *
+    
+2.  In the _intro_ program, add a new line that uses the `mov` instruction to put the value 8 into register `r3`. Attempt to add the value of register `r3` to the value in register `r3` and put the result into register `r3` with a single `add` instruction. Is it legal to do this?
+    
+    (This is roughly the equivalent of executing `a = a + a`.)
+    
+    * * *
+    
+3.  In the _intro_ program, add a new line that attempts to add the immediate values 4 and 5 to the register `r4` using the `add` instruction. Is it legal to do this? Replace either one of the operands with a register. Do both replacement work for the operands?
+    
+    * * *
+    
+
+Save your resulting program with the _File / Save_ menu. This saves your program to your _Download_ folder as `untitled.s`. Copy this to a more useful location and rename it as `l01_t03.s`. Zip this file with your answers file into a file named _yourID\_l01.zip_. Upload this zip file to the Chaoxing Space.
+
+* * *
