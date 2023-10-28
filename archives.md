@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Archives
+title: Lab Archives
 ---
 
 {% for post in site.posts %}
