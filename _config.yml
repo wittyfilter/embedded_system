@@ -30,7 +30,7 @@ author:
 # Build settings
 markdown: kramdown
 
-permalink: "/blog/:title"
+permalink: "/embedded_system/:title"
 
 plugins:
   - jekyll-paginate
