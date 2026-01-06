@@ -15,10 +15,6 @@ title: Textbook
 
 [Chapter-6---Processes-and-Operating-Systems_2023_Computers-as-Components]({{ site.baseurl }}/public/textbook/Chapter-6---Processes-and-Operating-Systems_2023_Computers-as-Components.pdf)
 
-[Chapter-7---System-Design-Techniques_2023_Computers-as-Components]({{ site.baseurl }}/public/textbook/Chapter-7---System-Design-Techniques_2023_Computers-as-Components.pdf)
-
 [Chapter-8---Internet-of-Things-Systems_2023_Computers-as-Components]({{ site.baseurl }}/public/textbook/Chapter-8---Internet-of-Things-Systems_2023_Computers-as-Components.pdf)
-
-[Chapter-9---Automotive-and-Aerospace-Systems_2023_Computers-as-Components]({{ site.baseurl }}/public/textbook/Chapter-9---Automotive-and-Aerospace-Systems_2023_Computers-as-Components.pdf)
 
 [Chapter-10---Embedded-Multiprocessors_2023_Computers-as-Components]({{ site.baseurl }}/public/textbook/Chapter-10---Embedded-Multiprocessors_2023_Computers-as-Components.pdf)
